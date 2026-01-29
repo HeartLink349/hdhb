@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>HeartLink | Valentine Special</title>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root{
+      --bg0:#0b1020;
+      --bg1:#0a0f1f;
+      --text:#f8fafc;
+      --pink:#ff4da6;
+      --violet:#8b5cf6;
+      --cyan:#22d3ee;
+      --shadow: 0 28px 60px rgba(0,0,0,.55);
+    }
+    *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; font-family: "Segoe UI", system-ui, sans-serif; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      color:var(--text);
+      overflow:hidden;
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(255,77,166,.20), transparent 60%),
+        radial-gradient(800px 500px at 80% 20%, rgba(139,92,246,.18), transparent 60%),
+        radial-gradient(700px 450px at 40% 85%, rgba(34,211,238,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+    .glow{
+      position:fixed; inset:-100px; pointer-events:none; z-index:-2;
+      filter: blur(60px); opacity:.55;
+      background:
+        radial-gradient(500px 380px at 20% 20%, rgba(255,77,166,.30), transparent 60%),
+        radial-gradient(520px 400px at 85% 25%, rgba(139,92,246,.28), transparent 65%),
+        radial-gradient(420px 320px at 45% 90%, rgba(34,211,238,.18), transparent 60%);
+      animation: floaty 12s ease-in-out infinite alternate;
+    }
+    @keyframes floaty{
+      0%{ transform: translate3d(-1.5%, -1%, 0) scale(1.02); }
+      100%{ transform: translate3d(1.8%, 1.2%, 0) scale(1.05); }
+    }
+    canvas#hearts{ position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.9; }
+
+    .app{ height:100dvh; display:flex; flex-direction:column; }
+    header{ height:86px; display:flex; align-items:center; justify-content:center; padding: 14px 18px; }
+    .brand{ display:flex; align-items:center; flex-direction: column; gap:4px; min-width:0; text-align: center; }
+    .logo{
+      width:42px; height:42px; border-radius:14px; display:grid; place-items:center;
+      background: linear-gradient(135deg, rgba(255,77,166,.22), rgba(139,92,246,.18));
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 10px 24px rgba(0,0,0,.35);
+      backdrop-filter: blur(14px);
+      margin-bottom: 4px;
+    }
+    .logo i{
+      font-size:18px;
+      background: linear-gradient(135deg, var(--pink), var(--violet), var(--cyan));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .brand h1{ margin:0; font-size:15px; font-weight:900; white-space:nowrap; }
+    .brand small{ display:block; font-size:10px; letter-spacing:1.4px; text-transform:uppercase; color: rgba(255,255,255,.55); }
+
+    main{ flex:1; padding: 0 16px 18px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .stage{ width:100%; max-width:520px; height: calc(100dvh - 86px - 18px); position:relative; margin: 0 auto; }
+
+    .card{
+      width:100%; height:100%;
+      border-radius: 30px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px);
+      overflow:hidden;
+      position:absolute; inset:0;
+      transform: translateY(14px) scale(.985);
+      opacity:0; pointer-events:none;
+      transition: .55s cubic-bezier(.2,.8,.2,1);
+    }
+    .card.active{ transform: translateY(0) scale(1); opacity:1; pointer-events:auto; }
+    .card-inner{ height:100%; overflow-y:auto; overflow-x:hidden; padding: 22px 18px 18px; scrollbar-width:none; display: flex; flex-direction: column; align-items: center; }
+    .card-inner::-webkit-scrollbar{ display:none; }
+
+    .hero{ text-align:center; padding: 18px 14px 8px; width: 100%; }
+    .hero h2{ margin:0; font-size:28px; font-weight:1000; line-height:1.2; }
+    .gradtxt{
+      background: linear-gradient(135deg, var(--pink), var(--violet), var(--cyan));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,.35));
+    }
+    .hero p{ margin:10px 0 0; font-size:14px; color: rgba(255,255,255,.78); font-weight:800; }
+
+    .login-container { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; width: 100%; }
+    .panel{ padding: 16px; border-radius: 22px; border: 1px solid rgba(255,255,255,.12); background: rgba(10,14,30,.45); backdrop-filter: blur(18px); box-shadow: 0 16px 40px rgba(0,0,0,.35); }
+    .field{ display:flex; flex-direction: column; gap:15px; align-items:center; }
+    .input{ width: 100%; display:flex; align-items:center; gap:10px; padding: 14px 14px; border-radius: 18px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); }
+    .input i{ color: rgba(255,255,255,.65); }
+    input[type="password"]{ width:100%; border:none; outline:none; background:transparent; color: var(--text); font-size:14px; font-weight:800; letter-spacing:.6px; text-align: center; }
+    input::placeholder{ color: rgba(255,255,255,.55); font-weight:800; }
+
+    .btn{
+      border:none; cursor:pointer; padding: 16px 14px; border-radius: 18px; font-weight:1000;
+      color:#0b1020; background: linear-gradient(135deg, var(--pink), var(--violet));
+      box-shadow: 0 14px 28px rgba(255,77,166,0.22);
+      transition: transform .12s ease;
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      width: 100%; white-space:nowrap; font-size: 16px;
+    }
+    .btn:active{ transform: scale(.98); }
+    .btn.secondary{ background: rgba(255,255,255,.10); color: var(--text); border:1px solid rgba(255,255,255,.14); box-shadow:none; min-width: unset; width: auto; }
+    .hint{ margin-top: 10px; font-size: 12px; color: rgba(255,255,255,.60); font-weight:700; text-align:center; }
+
+    .section-title{ text-align:center; margin: 4px 0 12px; font-size: 18px; font-weight:1000; width: 100%; }
+    .timer{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 8px; width: 100%; }
+    .tbox{ padding: 14px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); text-align:center; position:relative; overflow:hidden; }
+    .tbox::before{ content:""; position:absolute; inset:-40px; background: radial-gradient(circle at 20% 20%, rgba(255,77,166,.18), transparent 55%), radial-gradient(circle at 80% 80%, rgba(139,92,246,.16), transparent 55%); filter: blur(18px); opacity:.9; }
+    .tbox > *{ position:relative; z-index:1; }
+    .tval{ font-size: 22px; font-weight:1000; }
+    .tlabel{ margin-top: 4px; font-size: 11px; color: rgba(255,255,255,.70); font-weight:900; letter-spacing:1px; text-transform:uppercase; }
+
+    .player{ margin-top: 14px; padding: 14px; border-radius: 22px; border: 1px solid rgba(255,255,255,.12); background: rgba(10,14,30,.45); backdrop-filter: blur(18px); box-shadow: 0 16px 40px rgba(0,0,0,.30); width: 100%; }
+    .player-top{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .track{ display:flex; align-items:center; gap:10px; min-width:0; }
+    .disc{ width:42px; height:42px; border-radius:16px; background: linear-gradient(135deg, rgba(255,77,166,.22), rgba(139,92,246,.18)); border: 1px solid rgba(255,255,255,.12); display:grid; place-items:center; box-shadow: 0 10px 24px rgba(0,0,0,.25); }
+    .disc i{ font-size:16px; background: linear-gradient(135deg, var(--pink), var(--violet), var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .track-title{ font-weight:1000; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .track-sub{ font-size:11px; color: var(--pink); font-weight:800; margin-top:2px; }
+
+    .pbtn{ width:48px; height:48px; border-radius: 18px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.08); color: var(--text); cursor:pointer; display:grid; place-items:center; transition: transform .12s ease; }
+    .pbtn:active{ transform: scale(.98); }
+    .bar{ margin-top: 12px; display:flex; align-items:center; gap:10px; }
+    .time{ font-size: 11px; color: rgba(255,255,255,.65); font-weight:900; min-width:42px; text-align:center; }
+    .range{ flex:1; height: 10px; border-radius: 999px; background: rgba(255,255,255,.10); position:relative; cursor:pointer; overflow:hidden; }
+    .fill{ position:absolute; inset:0 auto 0 0; width:0%; background: linear-gradient(135deg, var(--pink), var(--violet)); border-radius: 999px; }
+    .knob{ position:absolute; top:50%; width: 16px; height:16px; border-radius: 50%; background:#fff; transform: translate(-50%, -50%); left: 0%; box-shadow: 0 10px 24px rgba(0,0,0,.30); border: 3px solid rgba(255,77,166,.35); pointer-events:none; }
+    .player-bottom{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top: 12px; }
+    .vwrap{ display:flex; align-items:center; gap:8px; width:45%; }
+    .vwrap i{ color: rgba(255,255,255,.7); }
+    input[type="range"].vol{ width:100%; accent-color: var(--pink); }
+
+    .headline{ margin: 14px 0 8px; text-align:center; font-size: 18px; font-weight:1000; width: 100%; }
+
+    .grid{ display:flex; flex-direction: column; gap: 20px; margin-top: 12px; width: 100%; align-items: center; }
+    .imgcard{ border-radius: 20px; overflow:hidden; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); box-shadow: 0 18px 40px rgba(0,0,0,.25); display:flex; flex-direction:column; width: 100%; max-width: 340px; touch-action: pan-y; }
+    .imgwrap{ position:relative; overflow:hidden; width: 100%; }
+    .imgwrap img, .imgwrap video{ width:100%; height:auto; display:block; transition: transform .7s cubic-bezier(.2,.8,.2,1); object-fit: cover; }
+    .imgcard:active img{ transform: scale(1.05); }
+    .cap{ padding: 12px 10px 15px; font-size: 14px; font-weight:900; color: rgba(255,255,255,.86); text-align:center; }
+
+    .overlay{ position:fixed; inset:0; background: rgba(0,0,0,.85); backdrop-filter: blur(10px); display:flex; align-items:center; justify-content:center; padding: 18px; opacity:0; pointer-events:none; transition: opacity .35s ease; z-index: 50; }
+    .overlay.show{ opacity:1; pointer-events:auto; }
+    .letter{ width:min(560px, 100%); border-radius: 28px; border: 1px solid rgba(255,255,255,.14); background: rgba(10,14,30,.85); box-shadow: 0 30px 80px rgba(0,0,0,.65); overflow:hidden; transform: translateY(10px) scale(.99); transition: transform .35s ease; display:flex; flex-direction: column; max-height: 85vh; }
+    .letter-head{ padding: 16px; display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid rgba(255,255,255,.10); }
+    .xbtn{ width:40px; height:40px; border-radius: 14px; border:1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.08); color: var(--text); cursor:pointer; display:grid; place-items:center; }
+    .letter-body{ padding: 20px; overflow-y: auto; text-align: center; }
+    .line{ opacity:0; transform: translateY(10px); transition: .5s ease; font-size: 16px; font-weight: 800; line-height: 1.8; color: rgba(255,255,255,.9); white-space: pre-line; }
+    .line.reveal{ opacity:1; transform: translateY(0); }
+
+    .toast{ position:fixed; left: 50%; bottom: 16px; transform: translateX(-50%) translateY(20px); padding: 12px 14px; border-radius: 18px; border:1px solid rgba(255,255,255,.14); background: rgba(10,14,30,.70); backdrop-filter: blur(14px); box-shadow: 0 20px 50px rgba(0,0,0,.55); font-weight: 900; font-size: 12px; color: rgba(255,255,255,.9); opacity:0; pointer-events:none; transition: opacity .25s ease, transform .25s ease; z-index: 60; }
+    .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="glow"></div>
+  <canvas id="hearts"></canvas>
+
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="logo"><i class="fa-solid fa-heart"></i></div>
+        <div>
+          <h1>HeartLink — My World</h1>
+          <small>private love page</small>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="stage">
+        <section class="card active" id="page1">
+          <div class="card-inner">
+            <div class="hero">
+              <h2><span class="gradtxt">Valentine</span> 🩷</h2>
+              <p>جاهزة تشوفي المفاجأة؟ 💕</p>
+            </div>
+            <div class="login-container">
+              <div class="panel">
+                <div class="field">
+                  <div class="input">
+                    <i class="fa-solid fa-lock"></i>
+                    <input id="pass" type="password" inputmode="numeric" placeholder="اكتبي الباسورد ي❤" />
+                  </div>
+                  <button class="btn" id="enterBtn">دوسي هنا 🌚 <i class="fa-solid fa-arrow-left"></i></button>
+                </div>
+              </div>
+              <div class="hint">💗 لمسة بسيطة… وبعدها هتبدأ الحكاية</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="page2">
+          <div class="card-inner">
+            <div class="section-title"><span class="gradtxt">بداية حكايتنا</span> ❤😍</div>
+            <div class="timer" id="timer">
+              <div class="tbox"><div class="tval" id="yy">0</div><div class="tlabel">سنين</div></div>
+              <div class="tbox"><div class="tval" id="mm">0</div><div class="tlabel">شهور</div></div>
+              <div class="tbox"><div class="tval" id="dd">0</div><div class="tlabel">أيام</div></div>
+              <div class="tbox"><div class="tval" id="hh">0</div><div class="tlabel">ساعات</div></div>
+              <div class="tbox"><div class="tval" id="mi">0</div><div class="tlabel">دقايق</div></div>
+              <div class="tbox"><div class="tval" id="ss">0</div><div class="tlabel">ثواني</div></div>
+            </div>
+
+            <div class="player">
+              <div class="player-top">
+                <div class="track">
+                  <div class="disc"><i class="fa-solid fa-music"></i></div>
+                  <div>
+                    <div class="track-title">أغنيتنا 🎵</div>
+                    <div class="track-sub">بعشقك 😍❤</div>
+                  </div>
+                </div>
+                <button class="pbtn" id="playBtn"><i class="fa-solid fa-play"></i></button>
+              </div>
+              <div class="bar">
+                <div class="time" id="cur">0:00</div>
+                <div class="range" id="seek"><div class="fill" id="fill"></div><div class="knob" id="knob"></div></div>
+                <div class="time" id="dur">0:00</div>
+              </div>
+              <div class="player-bottom">
+                <button class="btn secondary" id="muteBtn"><i class="fa-solid fa-volume-high"></i></button>
+                <div class="vwrap"><i class="fa-solid fa-volume-low"></i><input class="vol" id="vol" type="range" min="0" max="1" step="0.01" value="0.85" /></div>
+              </div>
+              <audio id="audio" loop src="https://g.top4top.io/m_3681mv1dk1.mp3"></audio>
+            </div>
+
+            <div class="headline"><span class="gradtxt">بحبك انتي وبس</span> 💗</div>
+            <div class="grid">
+              <figure class="imgcard"><div class="imgwrap"><img src="https://i.top4top.io/p_36811y3mi1.jpg"></div><figcaption class="cap">رزقني الله بك وأيقنت أنك أجمل أرزاقي أنت جميعي أنت نعيمي أنت الكثير في عيناي دمت لي كل العمر🦋♥️</figcaption></figure>
+              <figure class="imgcard"><div class="imgwrap"><img src="https://h.top4top.io/p_36813z7ih1.jpg"></div><figcaption class="cap">دمت لي شيئا جميلا لا ينتهي ♥️</figcaption></figure>
+              <figure class="imgcard"><div class="imgwrap"><img src="https://g.top4top.io/p_36812wp8x1.jpg"></div><figcaption class="cap">لا يُؤنِسُ الروحَ إلا روحٌ تألفها.</figcaption></figure>
+              <figure class="imgcard"><div class="imgwrap"><img src="https://j.top4top.io/p_3681ry09z1.jpg"></div><figcaption class="cap">من مُلِذّاتِ الصباح: أنتِ وصوتُكِ.🦋♥️</figcaption></figure>
+              <figure class="imgcard"><div class="imgwrap"><img src="https://i.top4top.io/p_3681ow6de1.jpg"></div><figcaption class="cap">واه من هواه خدني وياه وانا وياه لما تكون عيني شايفاه♥️</figcaption></figure>
+              <figure class="imgcard"><div class="imgwrap"><img src="https://h.top4top.io/p_3681ckaue1.jpg"></div><figcaption class="cap">روح قلبي ❤🌚</figcaption></figure>
+              <figure class="imgcard" style="border: 2px solid var(--pink);">
+                <div class="imgwrap"><video id="myVideo" controls><source src="https://f.top4top.io/m_36817sdbe1.mp4" type="video/mp4"></video></div>
+                <figcaption class="cap">انتي من امتلكتك في الدنيا يا من احبك قلبي واشتق لكي يا من رايتك عيني ولم ترا سواكي بحبك A❤M</figcaption>
+              </figure>
+            </div>
+
+            <div class="cta">
+              <button class="btn" id="msgBtn">دوسي متستعجليش 😂❤ <i class="fa-solid fa-wand-magic-sparkles"></i></button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="letter">
+      <div class="letter-head"><div class="ttl">رسالة ليكي 💌</div><button class="xbtn" id="closeOverlay"><i class="fa-solid fa-xmark"></i></button></div>
+      <div class="letter-body">
+        <div class="line" id="msgLine"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">الباسورد غلط يا روحي.. جربي تاني 😅</div>
+
+  <script>
+    const PASSWORD = "1/7";
+    const STORY_START = new Date("2025-01-07T00:00:00");
+    const BIG_MESSAGE = `بحبك ومحبتش غيرك ولا هعرف احب غيرك عشان انتي نور عيني انتي دنيتي انا اصلا عارفه عارف يا بنوتي انتي هديتي اللي انا فرحان بيها وهفضل فرحان بيها طول عمري مقدرش علي بعدك ولا اقدر علي غيابك ولا اقدر اعيش من غيرك وحياتي اللي انا عايش فيها انتي كل حكايتي الحلوه انتي سعادتي وفرحي عمري في يوم ما اقدر أفرط فيكي وعمري في يوم اهتمامي يقل ولو قصرت في حقك تقوليلي بس ده بيبقي غصب من عني والله ينور عيني بس مقدرش اقصر معاكي ابداا انتي النبض انتي الحياه انتي القمر ال بسهر معاه انا كل كلمه بقولها لك حلوه بتبقي طالعه من قلبي والله انتي العشق والحياه بموت فيكي ينور عيني وعمري ما افكر في يوم من الايام ابص لغيرك انتي ماليا عنيا بس انتي الدنيا كلها مش بحبك انا بعشقك وبموت فيكي انتي نور حياتي واحلي حاجه في دنيتي كلها انا ببقي فرحان قولي لما يبقي تعبان وتقوليلي تعالا في حضني مع اننا مش مع بعض بس بحس بالأمان معاكي وبعشقك بحبك اوي وبعشق غيرتك عليا وخوفك عليا وحنيتك عليا ولو حاجه مزعلاني مش انتي السبب بتهوني عليا وبعشق كلامك وطفولتك معايا ن وكل ثانيه حبي ليكي ليزيد كتير اوي اوي انا لو في حاجه اثبت بيها حبي ليكي كنت عملتها من قبل ما افكر بحبك يا احلي هديه حصلت في حياتي خدي البوسه دي اموووواه بعشقك يا بنوتي انتي بنتي واختي وصاحبتي وحياتي وكل الليا ربنا يخليكي ليا يا نور عنيا وما يحرمنيش منك ابدا انتي عارفه في كل الوقت وفي كل ثانيه معاكي بتوحشيني وانامعاكي بحبك بحبك حب الدنيا دي في قلبي ليك فيهاا انا بس عايز اقولكاني مش بحبك انا بعشقك ولو في كلمه اكبر من بعشقك كنت قلتلهالك ولو في كلام يوصف حبي ليكي أو يوصف حتي ربع حبي ليكي انا بحبك لدرجه اني مستعد اعمل اي حاجه واخسر اي حاجه عشان نفضل مع بعض وافضل اعمل ال متسحيل عشان نبقي مع بعض لو الدنيا كلها قالت مستحيل افضل احاول عشان بجد انتي ليا انا وبس وانا عارف ان في النهايه حبي هو ال هيفوز علي الدنيا وال فيها وعارف أن ربنا حاسس بيا و هيستجيب لدعواتي ل ربنا شايف اكيد انا بحبك ازاي وانتي بالنسبه لي ايه انا اصلا حياتي بقيت حلوه بسببك انتي وجودك خلاني ارجع واحب الحياه وحبيت حياتي عشان انتي وكل يوم يدعي ربنا يحفظك لي ويحميكي ويبعد عنك اي حاجه وحشه ويجعلك من نصيبي كل صلاه بظعي أننا نبقي لبعض اي حد ممكن يقول اني زهقت من علاقتنا أو مليت عمري مليت منك ابدا يا حبيبتي والله دول مش يومين عشتهم معاكي حلوين وخلاص افضل انا افضل احبك لاخر يوم في عمري انا جمبك لاخر نفس في عمري انا افضل اتعلم الحب معاكي عرفت الحب لما حبيتك حبيتك حب ما فيش واحد يعرف يحبه لحد ما فيش كلام في الدنيا يقدر يوصف انا حبيتك قد اي وتقدري تقولي انا ما صدقت لقيت النص التاني ساعات بحس اني ابنك وباباكي وانتي بنوتي وحبيبتي وروح قلبي ولو اتكلم عمري كلو مش هديكي حقك من ال انتي بتعمليه معايا مفيشكلو مش هديكي حقك من ال انتي بتعمليه معايا مفيش مش احن منك في الدنيا عشان كدا دي الحاجه ال خلتني احبك ومتعلق بيكي برتاح لما اجي فضفلك من حاجات مضيقاني جيتي خديني من وسط عالم غريب كنت تايه فيه كنت كاره حياتي باللي فيها انتي حياتي غيرتي كل دا وانتي غيرتيني انا شخصيا بس محظوظ عشان انتي دخلتي حياتي انا ربنا عطاني هديه وعوضني بيها عن الدنيا بحالها وخلتيني من كتر منا بحبك حبيت الدنيا ومستعد اعمل اي حاجه عشان نكون مع بعض ولبعض عايزك تكوني عارفه اني بحبك وبحب هزارك وبحب ضحكتك وبموت فيكي اقسم بالله تفكيري انتي حياتي انتي نجمه وقعت من السما ودخلت جوه قلبي وانتي عمري بحب اقضي وقتي معاكي انتي وخده كل وقتي وكل حاجه بحبك وعمري مهحب حد بعدك ولا هحب قدك انتي جنتي ال حلوه ال بهرب من العالم كله معانا وعشان ابقي معاكي وبس ربنا يخليكي ليا وميحرمنيش منك ابدا يروح قلبيي عارفه اني سعات بزعلك بس والله غصب عني مش عايزك تزعلي مني ابدا يتمناه دايما من ربنا انك تكوني ليا الثانية ال بتغيبي فينا عني بيبقا اليوم ملهوش لازمه من غيرك انتي ال بتحبي وقتي لما اكون تعبان مش بلاقي حد غيرك اتكلم معااا كل نبضه فقلبيي بحبك ينبض قلبيي بتنبض باسمك انتي وبس بحبك يا احلا بنوته وبحبك يا قلب بابا ♥️♥️♥️`;
+
+    const audio = document.getElementById("audio");
+    const video = document.getElementById("myVideo");
+    const playBtn = document.getElementById("playBtn");
+    const passInput = document.getElementById("pass");
+
+    // دخول الصفحة
+    document.getElementById("enterBtn").onclick = () => {
+      if(passInput.value.trim() === PASSWORD) {
+        document.getElementById("page1").classList.remove("active");
+        document.getElementById("page2").classList.add("active");
+        audio.play().catch(()=>{});
+      } else {
+        document.getElementById("toast").classList.add("show");
+        setTimeout(()=>document.getElementById("toast").classList.remove("show"), 2000);
+      }
+    };
+
+    // مزامنة الصوت والفيديو
+    video.onplay = () => audio.pause();
+    video.onpause = () => { if(document.getElementById("page2").classList.contains("active")) audio.play(); };
+
+    // المشغل الموسيقي
+    playBtn.onclick = () => {
+      if(audio.paused) { audio.play(); playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>'; }
+      else { audio.pause(); playBtn.innerHTML = '<i class="fa-solid fa-play"></i>'; }
+    };
+    audio.addEventListener("timeupdate", () => {
+      const p = (audio.currentTime / audio.duration) * 100;
+      document.getElementById("fill").style.width = p + "%";
+      document.getElementById("knob").style.left = p + "%";
+      document.getElementById("cur").textContent = Math.floor(audio.currentTime / 60) + ":" + String(Math.floor(audio.currentTime % 60)).padStart(2, '0');
+    });
+    audio.onloadedmetadata = () => { document.getElementById("dur").textContent = Math.floor(audio.duration / 60) + ":" + String(Math.floor(audio.duration % 60)).padStart(2, '0'); };
+
+    // العداد الزمني المظبوط لـ 7 يناير 2025
+    function tick() {
+      const now = new Date();
+      const start = STORY_START;
+      
+      let years = now.getFullYear() - start.getFullYear();
+      let months = now.getMonth() - start.getMonth();
+      let days = now.getDate() - start.getDate();
+
+      if (days < 0) {
+        months--;
+        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += prevMonth.getDate();
+      }
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      const diffMs = now - start;
+      const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
+      const seconds = Math.floor((diffMs / 1000) % 60);
+
+      document.getElementById("yy").innerText = years;
+      document.getElementById("mm").innerText = months;
+      document.getElementById("dd").innerText = days;
+      document.getElementById("hh").innerText = String(hours).padStart(2, '0');
+      document.getElementById("mi").innerText = String(minutes).padStart(2, '0');
+      document.getElementById("ss").innerText = String(seconds).padStart(2, '0');
+    }
+    setInterval(tick, 1000); tick();
+
+    // الرسالة
+    document.getElementById("msgBtn").onclick = () => {
+      const overlay = document.getElementById("overlay");
+      const line = document.getElementById("msgLine");
+      line.textContent = BIG_MESSAGE;
+      overlay.classList.add("show");
+      setTimeout(() => line.classList.add("reveal"), 100);
+    };
+    document.getElementById("closeOverlay").onclick = () => document.getElementById("overlay").classList.remove("show");
+
+    // قلوب طائرة
+    const canvas = document.getElementById("hearts");
+    const ctx = canvas.getContext("2d");
+    let W, H;
+    const hearts = [];
+    function res() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    window.onresize = res; res();
+    for(let i=0; i<40; i++) hearts.push({x:Math.random()*W, y:Math.random()*H, s:Math.random()*15+10, v:Math.random()*1.5+0.5});
+    function draw() {
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle = "rgba(255, 77, 166, 0.6)";
+      hearts.forEach(h => {
+        ctx.font = h.s + "px serif";
+        ctx.fillText("❤", h.x, h.y);
+        h.y -= h.v; if(h.y < -20) h.y = H + 20;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
+</body>
+</html>
